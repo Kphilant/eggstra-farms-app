@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eggstra Farms Management</title>
+    <!-- Tailwind CSS CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="eggsstrafarms.png">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7fbeb; /* Light earthy green */
+            color: #1e3a24; /* Dark green text */
+        }
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .content {
+            flex-grow: 1;
+            padding-bottom: 6rem; /* Space for the fixed navigation bar */
+        }
+        .nav-link {
+            transition: all 0.2s ease-in-out;
+        }
+        .nav-link.active {
+            color: #55c141; /* Primary green */
+            border-bottom: 3px solid #55c141;
+        }
+        .nav-link:hover {
+            color: #55c141;
+        }
+        .card {
+            background-color: #ffffff;
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        input, textarea, button {
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="app-container">
+        <!-- Content will be rendered here by JavaScript -->
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white shadow-lg z-50">
+        <div class="flex justify-around items-center p-3 md:p-4">
+            <a href="#dashboard" class="nav-link flex flex-col items-center text-gray-500">
+                <i class="fas fa-home text-xl mb-1"></i>
+                <span class="text-xs">Home</span>
+            </a>
+            <a href="#inventory" class="nav-link flex flex-col items-center text-gray-500">
+                <i class="fas fa-box-open text-xl mb-1"></i>
+                <span class="text-xs">Inventory</span>
+            </a>
+            <a href="#sales" class="nav-link flex flex-col items-center text-gray-500">
+                <i class="fas fa-cash-register text-xl mb-1"></i>
+                <span class="text-xs">Sales</span>
+            </a>
+            <a href="#staff" class="nav-link flex flex-col items-center text-gray-500">
+                <i class="fas fa-users text-xl mb-1"></i>
+                <span class="text-xs">Staff</span>
+            </a>
+            <a href="#contact" class="nav-link flex flex-col items-center text-gray-500">
+                <i class="fas fa-map-marker-alt text-xl mb-1"></i>
+                <span class="text-xs">Contact</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const app = document.getElementById('app');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            // Simple router to handle page views
+            const router = () => {
+                const hash = window.location.hash || '#dashboard';
+                updateNavLinks(hash);
+
+                switch (hash) {
+                    case '#dashboard':
+                        renderDashboard();
+                        break;
+                    case '#inventory':
+                        renderInventory();
+                        break;
+                    case '#sales':
+                        renderSales();
+                        break;
+                    case '#staff':
+                        renderStaff();
+                        break;
+                    case '#contact':
+                        renderContact();
+                        break;
+                    default:
+                        renderDashboard();
+                        break;
+                }
+            };
+
+            const updateNavLinks = (hash) => {
+                navLinks.forEach(link => {
+                    if (link.getAttribute('href') === hash) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+            };
+
+            // Helper function to get data from local storage
+            const getData = (key) => JSON.parse(localStorage.getItem(key)) || [];
+
+            // Helper function to save data to local storage
+            const saveData = (key, data) => localStorage.setItem(key, JSON.stringify(data));
+
+            // Dashboard Page Renderer
+            const renderDashboard = () => {
+                app.innerHTML = `
+                    <div class="p-6 md:p-10 text-center content">
+                        <img src="eggsstrafarms.png" alt="Eggstra Farms Logo" class="mx-auto w-32 h-32 md:w-40 md:h-40 mb-6 rounded-full shadow-md">
+                        <h1 class="text-4xl md:text-5xl font-bold mb-4">Welcome, Eggstra Farms</h1>
+                        <p class="text-lg md:text-xl text-gray-700 mb-8 max-w-2xl mx-auto">
+                            Your foundational digital tool for daily operations. Use the navigation below to manage your inventory, sales, and staff activities.
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                            <a href="#inventory" class="p-6 card hover:shadow-xl transition-shadow flex flex-col items-center">
+                                <i class="fas fa-box-open text-3xl text-yellow-600 mb-3"></i>
+                                <span class="font-semibold text-lg">Manage Inventory</span>
+                                <p class="text-sm text-gray-600">Track eggs, pigs, and fish.</p>
+                            </a>
+                            <a href="#sales" class="p-6 card hover:shadow-xl transition-shadow flex flex-col items-center">
+                                <i class="fas fa-cash-register text-3xl text-blue-600 mb-3"></i>
+                                <span class="font-semibold text-lg">Log Sales</span>
+                                <p class="text-sm text-gray-600">Record daily transactions.</p>
+                            </a>
+                            <a href="#staff" class="p-6 card hover:shadow-xl transition-shadow flex flex-col items-center">
+                                <i class="fas fa-users text-3xl text-green-600 mb-3"></i>
+                                <span class="font-semibold text-lg">Staff Activity</span>
+                                <p class="text-sm text-gray-600">Submit daily tasks and reports.</p>
+                            </a>
+                        </div>
+                    </div>
+                `;
+            };
+
+            // Inventory Page Renderer
+            const renderInventory = () => {
+                app.innerHTML = `
+                    <div class="p-6 md:p-10 content">
+                        <h1 class="text-3xl md:text-4xl font-bold mb-6">Inventory Tracking</h1>
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <!-- Eggs Section -->
+                            <div class="card p-6">
+                                <h2 class="text-2xl font-semibold mb-4 text-yellow-600"><i class="fas fa-egg mr-2"></i>Egg Production</h2>
+                                <form id="egg-form" class="flex flex-col space-y-4">
+                                    <input type="number" id="egg-count" placeholder="Number of eggs" class="p-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                                    <button type="submit" class="bg-yellow-500 text-white p-3 font-semibold hover:bg-yellow-600 transition-colors">Record Eggs</button>
+                                </form>
+                                <div class="mt-6">
+                                    <h3 class="font-semibold text-lg mb-2">Daily Log:</h3>
+                                    <ul id="egg-list" class="space-y-2 text-gray-700"></ul>
+                                </div>
+                            </div>
+
+                            <!-- Piggery Section -->
+                            <div class="card p-6">
+                                <h2 class="text-2xl font-semibold mb-4 text-red-600"><i class="fas fa-piggy-bank mr-2"></i>Piggery</h2>
+                                <form id="piggery-form" class="flex flex-col space-y-4">
+                                    <textarea id="piggery-notes" placeholder="Notes on piggery (e.g., feed, health)" rows="3" class="p-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"></textarea>
+                                    <button type="submit" class="bg-red-500 text-white p-3 font-semibold hover:bg-red-600 transition-colors">Record Piggery</button>
+                                </form>
+                                <div class="mt-6">
+                                    <h3 class="font-semibold text-lg mb-2">Daily Log:</h3>
+                                    <ul id="piggery-list" class="space-y-2 text-gray-700"></ul>
+                                </div>
+                            </div>
+
+                            <!-- Fish Section -->
+                            <div class="card p-6">
+                                <h2 class="text-2xl font-semibold mb-4 text-blue-600"><i class="fas fa-fish mr-2"></i>Fish Farm</h2>
+                                <form id="fish-form" class="flex flex-col space-y-4">
+                                    <input type="text" id="fish-notes" placeholder="Notes on fish farm (e.g., harvest, feeding)" class="p-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <button type="submit" class="bg-blue-500 text-white p-3 font-semibold hover:bg-blue-600 transition-colors">Record Fish</button>
+                                </form>
+                                <div class="mt-6">
+                                    <h3 class="font-semibold text-lg mb-2">Daily Log:</h3>
+                                    <ul id="fish-list" class="space-y-2 text-gray-700"></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Add event listeners and render data after the page is loaded
+                const eggForm = document.getElementById('egg-form');
+                const piggeryForm = document.getElementById('piggery-form');
+                const fishForm = document.getElementById('fish-form');
+
+                eggForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const count = document.getElementById('egg-count').value;
+                    if (count) {
+                        const data = getData('egg_inventory');
+                        data.push({ date: new Date().toLocaleDateString(), count: count });
+                        saveData('egg_inventory', data);
+                        renderInventoryLists();
+                        document.getElementById('egg-count').value = '';
+                    }
+                });
+
+                piggeryForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const notes = document.getElementById('piggery-notes').value;
+                    if (notes) {
+                        const data = getData('piggery_inventory');
+                        data.push({ date: new Date().toLocaleDateString(), notes: notes });
+                        saveData('piggery_inventory', data);
+                        renderInventoryLists();
+                        document.getElementById('piggery-notes').value = '';
+                    }
+                });
+                
+                fishForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const notes = document.getElementById('fish-notes').value;
+                    if (notes) {
+                        const data = getData('fish_inventory');
+                        data.push({ date: new Date().toLocaleDateString(), notes: notes });
+                        saveData('fish_inventory', data);
+                        renderInventoryLists();
+                        document.getElementById('fish-notes').value = '';
+                    }
+                });
+                
+                const renderInventoryLists = () => {
+                    const eggList = document.getElementById('egg-list');
+                    const piggeryList = document.getElementById('piggery-list');
+                    const fishList = document.getElementById('fish-list');
+
+                    const eggData = getData('egg_inventory');
+                    eggList.innerHTML = eggData.map(item => `<li><i class="fas fa-calendar-alt mr-2"></i>${item.date}: ${item.count} eggs</li>`).join('');
+
+                    const piggeryData = getData('piggery_inventory');
+                    piggeryList.innerHTML = piggeryData.map(item => `<li><i class="fas fa-calendar-alt mr-2"></i>${item.date}: ${item.notes}</li>`).join('');
+
+                    const fishData = getData('fish_inventory');
+                    fishList.innerHTML = fishData.map(item => `<li><i class="fas fa-calendar-alt mr-2"></i>${item.date}: ${item.notes}</li>`).join('');
+                };
+
+                renderInventoryLists();
+            };
+
+            // Sales Page Renderer
+            const renderSales = () => {
+                app.innerHTML = `
+                    <div class="p-6 md:p-10 content">
+                        <h1 class="text-3xl md:text-4xl font-bold mb-6">Sales Log</h1>
+                        <div class="card p-6">
+                            <h2 class="text-2xl font-semibold mb-4 text-blue-600"><i class="fas fa-cash-register mr-2"></i>Record a Sale</h2>
+                            <form id="sales-form" class="flex flex-col space-y-4">
+                                <input type="text" id="product-type" placeholder="Product Type (e.g., Eggs, Pork)" class="p-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                <input type="number" id="quantity" placeholder="Quantity" class="p-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                <input type="text" id="customer-name" placeholder="Customer Name (Optional)" class="p-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <button type="submit" class="bg-blue-500 text-white p-3 font-semibold hover:bg-blue-600 transition-colors">Log Sale</button>
+                            </form>
+                        </div>
+                        <div class="mt-8 card p-6">
+                            <h3 class="font-semibold text-xl mb-4">Sales Transactions:</h3>
+                            <ul id="sales-list" class="space-y-4"></ul>
+                        </div>
+                    </div>
+                `;
+
+                const salesForm = document.getElementById('sales-form');
+                salesForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const productType = document.getElementById('product-type').value;
+                    const quantity = document.getElementById('quantity').value;
+                    const customerName = document.getElementById('customer-name').value;
+                    if (productType && quantity) {
+                        const data = getData('sales_log');
+                        data.push({
+                            date: new Date().toLocaleDateString(),
+                            product: productType,
+                            quantity: quantity,
+                            customer: customerName || 'N/A'
+                        });
+                        saveData('sales_log', data);
+                        renderSalesList();
+                        salesForm.reset();
+                    }
+                });
+
+                const renderSalesList = () => {
+                    const salesList = document.getElementById('sales-list');
+                    const salesData = getData('sales_log');
+                    salesList.innerHTML = salesData.map(item => `
+                        <li class="border-b pb-2 last:border-b-0">
+                            <span class="font-medium">${item.product}</span> - ${item.quantity} units
+                            <br>
+                            <span class="text-sm text-gray-500">Sold to ${item.customer} on ${item.date}</span>
+                        </li>
+                    `).join('');
+                };
+
+                renderSalesList();
+            };
+
+            // Staff Page Renderer
+            const renderStaff = () => {
+                app.innerHTML = `
+                    <div class="p-6 md:p-10 content">
+                        <h1 class="text-3xl md:text-4xl font-bold mb-6">Staff Activity Log</h1>
+                        <div class="card p-6">
+                            <h2 class="text-2xl font-semibold mb-4 text-green-600"><i class="fas fa-pencil-alt mr-2"></i>Log an Activity</h2>
+                            <form id="staff-form" class="flex flex-col space-y-4">
+                                <input type="text" id="staff-name" placeholder="Your Name" class="p-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500" required>
+                                <textarea id="staff-activity" placeholder="Describe your daily task or report" rows="4" class="p-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500" required></textarea>
+                                <button type="submit" class="bg-green-500 text-white p-3 font-semibold hover:bg-green-600 transition-colors">Submit Activity</button>
+                            </form>
+                        </div>
+                        <div class="mt-8 card p-6">
+                            <h3 class="font-semibold text-xl mb-4">Recent Activities:</h3>
+                            <ul id="staff-list" class="space-y-4"></ul>
+                        </div>
+                    </div>
+                `;
+
+                const staffForm = document.getElementById('staff-form');
+                staffForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const name = document.getElementById('staff-name').value;
+                    const activity = document.getElementById('staff-activity').value;
+                    if (name && activity) {
+                        const data = getData('staff_log');
+                        data.push({
+                            date: new Date().toLocaleDateString(),
+                            name: name,
+                            activity: activity
+                        });
+                        saveData('staff_log', data);
+                        renderStaffList();
+                        staffForm.reset();
+                    }
+                });
+
+                const renderStaffList = () => {
+                    const staffList = document.getElementById('staff-list');
+                    const staffData = getData('staff_log');
+                    staffList.innerHTML = staffData.map(item => `
+                        <li class="border-b pb-2 last:border-b-0">
+                            <span class="font-medium">${item.name}</span> reported on ${item.date}:
+                            <p class="text-sm text-gray-600 mt-1">${item.activity}</p>
+                        </li>
+                    `).join('');
+                };
+
+                renderStaffList();
+            };
+            
+            // Contact Page Renderer
+            const renderContact = () => {
+                app.innerHTML = `
+                    <div class="p-6 md:p-10 content">
+                        <h1 class="text-3xl md:text-4xl font-bold mb-6">Contact Us</h1>
+                        <div class="card p-6 mb-6">
+                            <h2 class="text-2xl font-semibold mb-4 text-gray-800"><i class="fas fa-info-circle mr-2"></i>Farm Details</h2>
+                            <div class="space-y-4 text-lg text-gray-700">
+                                <p><i class="fas fa-map-marker-alt mr-2 text-yellow-600"></i><strong>Location:</strong> Hwakpo, Ada West, Ghana</p>
+                                <p><i class="fas fa-envelope mr-2 text-blue-600"></i><strong>Email:</strong> info@eggstrafarmsghana.com</p>
+                                <p><i class="fas fa-phone mr-2 text-green-600"></i><strong>Phone:</strong> +233 24 984 4884</p>
+                            </div>
+                        </div>
+                        <div class="card p-6">
+                            <h2 class="text-2xl font-semibold mb-4 text-gray-800"><i class="fas fa-map mr-2"></i>Find Us on Google Maps</h2>
+                            <a href="https://maps.google.com/?q=Hwakpo,+Ada+West,+Ghana" target="_blank" rel="noopener noreferrer" class="inline-block w-full bg-blue-500 text-white text-center p-3 font-semibold rounded-lg hover:bg-blue-600 transition-colors">
+                                View Location
+                            </a>
+                        </div>
+                    </div>
+                `;
+            };
+
+            // Initial route and hash change listener
+            window.addEventListener('hashchange', router);
+            router();
+        });
+    </script>
+</body>
+</html>
